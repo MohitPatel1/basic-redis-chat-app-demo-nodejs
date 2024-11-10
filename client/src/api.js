@@ -14,16 +14,7 @@ export const getMe = () => {
     .catch(_ => null);
 };
 
-/** Handle user log in */
-export const login = (username, password) => {
-  return axios.post(url('/login'), {
-    username,
-    password
-  }).then(x =>
-    x.data
-  )
-    .catch(e => { throw new Error(e.response && e.response.data && e.response.data.message); });
-};
+
 
 export const logOut = () => {
   return axios.post(url('/logout'));

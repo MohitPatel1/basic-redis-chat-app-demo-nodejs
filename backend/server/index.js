@@ -226,6 +226,7 @@ async function runApp() {
   /** Login/register login */
   app.post("/login", async (req, res) => {
     const { username, password } = req.body;
+    console.log({username, password});
     const usernameKey = makeUsernameKey(username);
     const userExists = await exists(usernameKey);
     if (!userExists) {
@@ -256,12 +257,10 @@ async function runApp() {
    * Create a private room and add users to it
    */
   app.post("/room", auth, async (req, res) => {
-    const { user1, user2 } = {
-      user1: parseInt(req.body.user1),
-      user2: parseInt(req.body.user2),
-    };
+    const user1Id = parseInt(req.body.user1Id);
+    const user2Id = parseInt(req.body.user2Id);
 
-    const [result, hasError] = await createPrivateRoom(user1, user2);
+    const [result, hasError] = await createPrivateRoom(user1Id, user2Id);
     if (hasError) {
       return res.sendStatus(400);
     }
