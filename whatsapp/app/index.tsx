@@ -1,7 +1,7 @@
 import { getOnlineUsers } from '@/api/getOnlineUsers';
 import { getRooms } from '@/api/getRooms';
 import { AppContext, AppContextProvider, Room, UserEntry } from '@/app/app-context';
-import { Chat } from '@/components/Chat/Chat';
+import Chat from '@/components/Chat/Chat';
 import { Login } from '@/components/Login';
 import Colors from '@/constants/Colors';
 import { useSocket } from '@/hooks/useSocket';
@@ -11,31 +11,65 @@ import moment from 'moment';
 import { useCallback, useContext, useEffect } from 'react';
 import { StyleSheet, Text, View } from "react-native";
 
+// Wrap the entire app with error boundary
 const Index = () => {
-  const {
-    loading,
-    user,
-    state,
-    dispatch,
-    onLogIn,
-    onMessageSend,
-    onLogOut,
-  } = useIndexHandlers();
-
-  if (loading) {
-    return <View style={styles.container}><Text>Loading...</Text></View>;
-  }
-
-  return (
-    <View style={styles.container}>
+  try {
+    return (
       <AppContextProvider>
-        {user 
-          ? <Chat user={user} onLogOut={onLogOut} onMessageSend={onMessageSend} />
-          : <Login onLogIn={onLogIn} />
-        }
+        <View style={styles.root}>
+          <IndexContent />
+        </View>
       </AppContextProvider>
-    </View>
-  )
+    );
+  } catch (err) {
+    console.error('Error in Index:', err);
+    return (
+      <View style={styles.root}>
+        <Text>Error loading app</Text>
+      </View>
+    );
+  }
+};
+
+const IndexContent = () => {
+  try {
+    const {
+      loading,
+      user,
+      state,
+      dispatch,
+      onLogIn,
+      onMessageSend,
+      onLogOut,
+    } = useIndexHandlers();
+
+    if (loading) {
+      return (
+        <View style={styles.container}>
+          <Text>Loading...</Text>
+        </View>
+      );
+    }
+
+    return (
+      <View style={styles.container}>
+        {user ? (
+          <Chat user={user} onLogOut={onLogOut} onMessageSend={onMessageSend} />
+        ) : (
+          <View style={styles.loginContainer}>
+            <Login onLogIn={onLogIn} />
+          </View>
+        )}
+      </View>
+    );
+  } catch (err) {
+    console.error('Error in IndexContent:', err);
+    return (
+      <View style={styles.container}>
+        <Text>Error loading content</Text>
+      </View>
+    );
+  }
 };
 
 const useIndexHandlers = () => {
@@ -156,12 +190,17 @@ const useIndexHandlers = () => {
 };
 
 const styles = StyleSheet.create({
+  root: {
+    flex: 1,
+    backgroundColor: '#fff',
+  },
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-    backgroundColor: '#fff',
+    width: '100%',
+  },
+  loginContainer: {
+    flex: 1,
+    width: '100%',
   },
   welcome: {
     width: '100%',

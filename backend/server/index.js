@@ -53,6 +53,7 @@ const auth = (req, res, next) => {
   if (!req.session.user) {
     return res.sendStatus(403);
   }
+  console.log(req.path);
   next();
 };
 

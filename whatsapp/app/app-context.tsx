@@ -11,7 +11,7 @@ export type Room = {
   connected?: boolean;
   id: string;
   forUserId?: number | string | null;
-  lastMessage?: Message;
+  lastMessage?: Message | null;
   messages?: Message[];
   name: string;
   offset?: number;
@@ -45,7 +45,7 @@ export type Action = {
   type: "set last message";
   payload: {
     id: string;
-    lastMessage: Message;
+    lastMessage: Message | null;
   }
 } | {
   type: "append users";

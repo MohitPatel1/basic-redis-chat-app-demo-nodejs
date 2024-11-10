@@ -1,6 +1,7 @@
 // @ts-check
+import { addRoom } from "@/api/addRoom";
 import { getMessages } from "@/api/getMessages";
-import { AppContext, UserEntry } from "@/app/app-context";
+import { AppContext, Room, UserEntry } from "@/app/app-context";
 import { parseRoomName } from "@/utils/parseRoomName";
 import { populateUsersFromLoadedMessages } from "@/utils/populateUsersFromLoadedMessages";
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
@@ -81,25 +82,40 @@ const useChatHandlers = (user: UserEntry) => {
   }, [scrollToBottom, roomId]);
 
   const onUserClicked = async (userId: string) => {
-    /** Check if room exists. */
-    const targetUser = state.users[userId];
-    let roomId = targetUser.room;
-    if (roomId === undefined) {
-      // @ts-ignore
-      const room = await addRoom(userId, user.id);
-      roomId = room.id;
-      /** We need to set this room id to user. */
-      dispatch({ type: "set user", payload: { ...targetUser, room: roomId } });
-      /** Then a new room should be added to the store. */
-      dispatch({
-        type: "add room",
-        // @ts-ignore
-        payload: { id: roomId, name: parseRoomName(room.names, user.username) },
-      });
-      return;
+    try {
+      /** Check if room exists. */
+      const targetUser = state.users[userId];
+      let roomId = targetUser.room;
+      
+      if (roomId === undefined) {
+        // Create new room
+        const response = await addRoom(userId, user.id);
+        roomId = response.id;
+        
+        /** We need to set this room id to user. */
+        dispatch({ 
+          type: "set user", 
+          payload: { ...targetUser, room: roomId } 
+        });
+        
+        /** Then a new room should be added to the store. */
+        dispatch({
+          type: "add room" as const,
+          payload: { 
+            id: roomId, 
+            name: parseRoomName(response.names, user.username),
+            messages: [],
+          } as Room,
+        });
+
+        return;
+      }
+      
+      /** Then switch to the room */
+      dispatch({ type: "set current room", payload: roomId });
+    } catch (error) {
+      console.error('Failed to handle user click:', error);
     }
-    /** Then a room should be changed */
-    dispatch({ type: "set current room", payload: roomId });
   };
 
   const onLoadMoreMessages = useCallback(() => {
@@ -121,4 +137,5 @@ const useChatHandlers = (user: UserEntry) => {
     messages,
   };
 };
+
 export default useChatHandlers;
