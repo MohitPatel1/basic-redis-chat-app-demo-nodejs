@@ -36,8 +36,6 @@ const IndexContent = () => {
     const {
       loading,
       user,
-      state,
-      dispatch,
       onLogIn,
       onMessageSend,
       onLogOut,
@@ -163,16 +161,26 @@ const useIndexHandlers = () => {
       if (typeof message !== "string" || message.trim().length === 0) {
         return;
       }
+
       if (!socket || !user) {
-        /** Normally there shouldn't be such case. */
-        console.error("Couldn't send message");
+        console.error("Socket or user not available");
         return;
       }
-      socket.emit("message", {
+
+      const messageData = {
         roomId: roomId,
         message,
         from: user.id,
         date: moment(new Date()).unix(),
+      };
+      
+      console.log('Emitting message:', messageData);
+      socket.emit("message", messageData, (error: any) => {
+        if (error) {
+          console.error('Message emission error:', error);
+        } else {
+          console.log('Message sent successfully');
+        }
       });
     },
     [user, socket]
@@ -181,8 +189,6 @@ const useIndexHandlers = () => {
   return {
     loading,
     user,
-    state,
-    dispatch,
     onLogIn,
     onMessageSend,
     onLogOut,

@@ -22,7 +22,9 @@ const Chat: React.FC<ChatProps> = ({ onLogOut, user, onMessageSend }) => {
   const isDrawerOpen = useRef(false);
 
   const toggleDrawer = () => {
-    console.log('Toggle drawer called', isDrawerOpen.current); // Debug log
+    console.log('Menu button pressed');
+    console.log('Current drawer state:', isDrawerOpen.current);
+    
     const toValue = isDrawerOpen.current ? -DRAWER_WIDTH : 0;
     const backdropToValue = isDrawerOpen.current ? 0 : 0.5;
 
@@ -37,7 +39,10 @@ const Chat: React.FC<ChatProps> = ({ onLogOut, user, onMessageSend }) => {
         duration: 300,
         useNativeDriver: true,
       }),
-    ]).start();
+    ]).start(() => {
+      console.log('Animation completed');
+      console.log('Drawer is now:', isDrawerOpen.current ? 'open' : 'closed');
+    });
 
     isDrawerOpen.current = !isDrawerOpen.current;
   };
@@ -72,6 +77,14 @@ const Chat: React.FC<ChatProps> = ({ onLogOut, user, onMessageSend }) => {
         toggleDrawer();
       }
     }, [currentRoom]); // eslint-disable-line react-hooks/exhaustive-deps
+
+    // Inside the Chat component, add this effect
+    useEffect(() => {
+      return () => {
+        drawerAnim.removeAllListeners();
+        backdropAnim.removeAllListeners();
+      };
+    }, []);
 
     if (!rooms || !dispatch) {
       return (
@@ -124,6 +137,7 @@ const Chat: React.FC<ChatProps> = ({ onLogOut, user, onMessageSend }) => {
               onPress={toggleDrawer}
               style={styles.menuButton}
               activeOpacity={0.7}
+              hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
             >
               <MaterialIcons name="menu" size={24} color="#000" />
             </TouchableOpacity>
@@ -144,6 +158,7 @@ const Chat: React.FC<ChatProps> = ({ onLogOut, user, onMessageSend }) => {
             message={message}
             setMessage={setMessage}
             onSubmit={() => {
+              console.log('onSubmit', message);
               if (message.trim()) {
                 onMessageSend(message.trim(), roomId);
                 setMessage("");
@@ -175,6 +190,7 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
     backgroundColor: '#000',
     zIndex: 999,
+    elevation: 24,
   },
   backdropTouchable: {
     flex: 1,
@@ -186,6 +202,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     backgroundColor: '#fff',
     zIndex: 1000,
+    elevation: 25,
     shadowColor: "#000",
     shadowOffset: {
       width: 2,
@@ -193,16 +210,17 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
-    elevation: 5,
   },
   chatBody: {
     flex: 1,
     backgroundColor: '#fff',
+    zIndex: 1,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     padding: 16,
+    paddingTop: 32,
     borderBottomWidth: 1,
     borderBottomColor: '#eee',
     backgroundColor: '#fff',
@@ -211,6 +229,11 @@ const styles = StyleSheet.create({
     marginRight: 16,
     padding: 8,
     borderRadius: 8,
+    minWidth: 40,
+    minHeight: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#f0f0f0',
   },
   roomName: {
     fontSize: 18,

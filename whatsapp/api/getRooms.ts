@@ -1,6 +1,5 @@
-import { apiUrl } from "@/utils/getApiUrl";
-import axios from "axios";
+import api from "@/config/axios";
 
 export const getRooms = async (userId: string) => {
-  return axios.get(apiUrl(`/rooms/${userId}`)).then(x => x.data);
+  return api.get(`/rooms/${userId}`).then(x => x.data);
 };

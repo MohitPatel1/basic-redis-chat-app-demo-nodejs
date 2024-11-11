@@ -76,6 +76,7 @@ const initPubSub = () => {
      *   data: object;
      * }}
      **/
+    console.log("pubsub message", message);
     const { serverId, type, data } = JSON.parse(message);
     /** We don't handle the pub/sub messages if the server is the same */
     if (serverId === SERVER_ID) {
@@ -116,7 +117,7 @@ async function runApp() {
     .then((x) => JSON.parse(x.toString()));
 
   app.use(bodyParser.json());
-  app.use("/", express.static(path.dirname(__dirname) + "/client/build"));
+  app.use("/", express.static(path.dirname(__dirname) + "../client/build"));
 
   initPubSub();
 

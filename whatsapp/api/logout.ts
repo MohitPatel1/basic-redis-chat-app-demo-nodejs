@@ -1,6 +1,5 @@
-import { apiUrl } from "@/utils/getApiUrl";
-import axios from "axios";
+import api from "@/config/axios";
 
 export const logOut = () => {
-  return axios.post(apiUrl('/logout'));
+  return api.post('/logout');
 };

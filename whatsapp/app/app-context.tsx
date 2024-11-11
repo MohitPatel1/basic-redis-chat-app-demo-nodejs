@@ -75,6 +75,7 @@ export type AppState = {
 
 
 const reducer: Reducer<AppState, Action> = (oldState, action) => {
+  console.log("action", action.type);
   switch (action.type) {
     case "clear":
       return { currentRoom: "0", rooms: {}, users: {} };
