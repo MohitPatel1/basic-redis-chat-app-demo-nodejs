@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "https://basic-redis-chat-app-demo-nodejs.onrender.com/static/css/main.504a511d.css",
+    "main.js": "https://basic-redis-chat-app-demo-nodejs.onrender.com/static/js/main.77727fab.js",
+    "index.html": "https://basic-redis-chat-app-demo-nodejs.onrender.com/index.html",
+    "main.504a511d.css.map": "https://basic-redis-chat-app-demo-nodejs.onrender.com/static/css/main.504a511d.css.map",
+    "main.77727fab.js.map": "https://basic-redis-chat-app-demo-nodejs.onrender.com/static/js/main.77727fab.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.504a511d.css",
+    "static/js/main.77727fab.js"
+  ]
+}

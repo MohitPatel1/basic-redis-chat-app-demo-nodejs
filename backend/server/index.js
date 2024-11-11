@@ -117,7 +117,7 @@ async function runApp() {
     .then((x) => JSON.parse(x.toString()));
 
   app.use(bodyParser.json());
-  app.use("/", express.static(path.dirname(__dirname) + "../client/build"));
+  app.use("/", express.static(path.dirname(__dirname) + "/client/build"));
 
   initPubSub();
 
